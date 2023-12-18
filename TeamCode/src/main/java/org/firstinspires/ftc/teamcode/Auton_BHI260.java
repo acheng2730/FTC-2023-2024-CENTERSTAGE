@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 //make sure to try driveFieldCentricFor and driveFieldCentric to make sure your timer works
 //if For doesn't work, figure out how to send commands in sequence
-@Autonomous(name = "Autonomous-toolbox")
+@Autonomous(name = "Autonomous-BHI260")
 public class Auton_BHI260 extends Base {
     @Override
     public void runOpMode() throws InterruptedException {

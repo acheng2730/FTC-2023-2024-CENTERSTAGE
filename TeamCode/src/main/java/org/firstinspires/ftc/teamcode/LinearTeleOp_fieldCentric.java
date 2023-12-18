@@ -13,7 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.util.List;
 
-//notes: why after collision goes back to robot centric?
+//notes: imu = hardwareMap.get(IMU.class, "imu"); --> imu = hardwareMap.get(IMU.class, "imu 1");
+//should be old expansion hub
 
 @TeleOp(name = "fieldCentric")
 public class LinearTeleOp_fieldCentric extends Base {

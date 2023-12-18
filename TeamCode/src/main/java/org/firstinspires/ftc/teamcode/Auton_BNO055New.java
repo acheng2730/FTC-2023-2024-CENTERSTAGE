@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@Autonomous(name = "Autonomous-toolbox")
+@Autonomous(name = "Autonomous-BNO055New")
 public class Auton_BNO055New extends Base {
     @Override
     public void runOpMode() throws InterruptedException {
