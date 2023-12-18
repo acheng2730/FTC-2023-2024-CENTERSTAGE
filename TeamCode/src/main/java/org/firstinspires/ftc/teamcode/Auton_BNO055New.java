@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 @Autonomous(name = "Autonomous-BNO055New")
-public class Auton_BNO055New extends Base {
+public class Auton_BNO055New extends BaseLinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
@@ -57,7 +57,7 @@ public class Auton_BNO055New extends Base {
     public void driveFieldCentric(double drive, double angle, double strafe) {
         // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
         double topRightPow, backRightPow, topLeftPow, backLeftPow;
-        double botHeading = -Math.toRadians(gyro2.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)); //is this the same as above?
+        double botHeading = -Math.toRadians(gyro2.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
 
         // Compute how much you need to turn to maintain that angle
         double currAngle = getAngle();

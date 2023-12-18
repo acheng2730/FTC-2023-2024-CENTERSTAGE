@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //note: cannot set very accurate positions without gyro
 
 @Autonomous(name = "AutonomousNoGyro")
-public class Auton_noGyro extends Base {
+public class Auton_noGyro extends BaseLinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {

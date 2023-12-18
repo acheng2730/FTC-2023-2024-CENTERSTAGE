@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -12,11 +14,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-@Autonomous(name = "Autonomous-BNO055")
-public class Auton_BHO055 extends BaseLinearOpMode {
+@Autonomous(name = "Autonomous-IMU")
+public class Auton_IMU extends BaseLinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
+
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        imu.initialize(parameters);
 
         topLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -47,9 +54,8 @@ public class Auton_BHO055 extends BaseLinearOpMode {
     }
 
     public double getAngle() {
-        //Orientation angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         Orientation angles =
-                gyro3.getAngularOrientation(
+                imu.getRobotOrientation(
                         AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // ZYX is Original
         return angles.firstAngle;
     }
@@ -58,7 +64,7 @@ public class Auton_BHO055 extends BaseLinearOpMode {
     public void driveFieldCentric(double drive, double angle, double strafe) {
         // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
         double topRightPow, backRightPow, topLeftPow, backLeftPow;
-        double botHeading = -Math.toRadians(gyro3.getAngularOrientation().firstAngle);
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Compute how much you need to turn to maintain that angle
         double currAngle = getAngle();

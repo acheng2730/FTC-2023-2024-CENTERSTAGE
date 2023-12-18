@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import java.util.List;
-
 @TeleOp(name = "robotCentric")
-public class LinearTeleOp_robotCentric extends Base {
+public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {

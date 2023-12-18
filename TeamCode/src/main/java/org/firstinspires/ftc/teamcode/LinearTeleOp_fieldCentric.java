@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,13 +9,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import java.util.List;
-
 //notes: imu = hardwareMap.get(IMU.class, "imu"); --> imu = hardwareMap.get(IMU.class, "imu 1");
 //should be old expansion hub
 
 @TeleOp(name = "fieldCentric")
-public class LinearTeleOp_fieldCentric extends Base {
+public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {

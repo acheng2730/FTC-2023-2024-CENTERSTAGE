@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //make sure to try driveFieldCentricFor and driveFieldCentric to make sure your timer works
 //if For doesn't work, figure out how to send commands in sequence
 @Autonomous(name = "Autonomous-BHI260")
-public class Auton_BHI260 extends Base {
+public class Auton_BHI260 extends BaseLinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
@@ -55,8 +55,7 @@ public class Auton_BHI260 extends Base {
         timer.reset();
         // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
         double topRightPow, backRightPow, topLeftPow, backLeftPow;
-        //double botHeading = -Math.toRadians(gyro.getAngularOrientation().firstAngle);
-        double botHeading = -Math.toRadians(gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)); //is this the same as above?
+        double botHeading = -Math.toRadians(gyro.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
 
         // Compute how much you need to turn to maintain that angle
         double currAngle = getAngle();
