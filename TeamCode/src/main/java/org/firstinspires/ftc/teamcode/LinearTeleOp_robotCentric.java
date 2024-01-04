@@ -36,6 +36,8 @@ public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
         boolean toggleMovementCR = false;
 
         while (opModeIsActive()) {
+            telemetry.addData("Wrist Pos: ", clawAngle.getPosition());
+            telemetry.update();
             double drive = gamepad1.left_stick_y * -1;
             double turn = gamepad1.right_stick_x;
             double strafe = gamepad1.left_stick_x * 1.1;
@@ -95,7 +97,7 @@ public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
             if (toggleWrist && !lastMovementWrist) {
                 toggleMovementWrist = !toggleMovementWrist;
                 if (toggleMovementWrist) {
-                    clawAngle.setPosition(0);
+                    clawAngle.setPosition(0.5);
                 } else {
                     clawAngle.setPosition(1);
                 }

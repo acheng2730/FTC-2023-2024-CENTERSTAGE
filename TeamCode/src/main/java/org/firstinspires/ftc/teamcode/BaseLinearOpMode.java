@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.BNO055IMUImpl;
-import com.qualcomm.hardware.bosch.BNO055IMUNew;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -14,14 +11,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 
 public abstract class BaseLinearOpMode extends LinearOpMode {
+    public IMU imu;
     DcMotor topLeft, topRight, backLeft, backRight;
     DcMotor arm1, arm2;
     Servo planeLauncher;
     Servo clawAngle, clawLeft, clawRight;
-    public IMU imu;
-    public BHI260IMU gyro;
-    public BNO055IMUNew gyro2;
-    public BNO055IMU gyro3;
     ElapsedTime timer = new ElapsedTime();
 
     /* int topLeftEncoderPos = topLeft.getCurrentPosition();
@@ -58,6 +52,11 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         //backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        imu.initialize(parameters);
     }
 
 

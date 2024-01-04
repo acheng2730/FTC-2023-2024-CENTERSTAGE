@@ -27,7 +27,9 @@ public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
 
         // Retrieve the IMU from the hardware map
         imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
@@ -49,6 +51,8 @@ public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
         boolean toggleMovementCR = false;
 
         while (opModeIsActive()) {
+            telemetry.addData("Wrist pos: ", clawAngle.getPosition());
+            telemetry.update();
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
@@ -59,6 +63,9 @@ public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
             }
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            telemetry.addData("IMU heading: ", botHeading);
+            telemetry.update();
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
