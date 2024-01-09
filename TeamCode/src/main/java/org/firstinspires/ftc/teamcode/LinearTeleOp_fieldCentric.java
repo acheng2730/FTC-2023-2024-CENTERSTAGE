@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-//notes: imu = hardwareMap.get(IMU.class, "imu"); --> imu = hardwareMap.get(IMU.class, "imu 1");
-//should be old expansion hub
-
+// A field centric mecanum drivetrain, which controls the robot relative to the driver's POV and not the robot.
+// It allows a more natural way to perform rotation while strafing and other evasive maneuvers
+// by automatically correcting robot heading.
 @TeleOp(name = "fieldCentric")
 public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
 
@@ -51,7 +51,11 @@ public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
         boolean toggleMovementCR = false;
 
         while (opModeIsActive()) {
-            telemetry.addData("Wrist pos: ", clawAngle.getPosition());
+            telemetry.addData("Wrist pos: ", clawAnglePos);
+            telemetry.addData("topLeftPos: ", topLeftEncoderPos);
+            telemetry.addData("topRightPos: ", topRightEncoderPos);
+            telemetry.addData("backLeftPos: ", backLeftEncoderPos);
+            telemetry.addData("backRightPos: ", backRightEncoderPos);
             telemetry.update();
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed

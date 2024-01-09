@@ -29,16 +29,21 @@ public class Auton_noGyro extends BaseLinearOpMode {
         driveFor(1, 0, 0, 3000, timer);
     }
 
-    public void driveFor(double drive, double turn, double strafe, double milliseconds, ElapsedTime timer) {
-        turn *= 1.1;
+    public void driveFor(double y, double x, double rx, int milliseconds, ElapsedTime timer) {
+        x *= 1.1;
         timer.reset();
-        double denominator = Math.max(Math.abs(drive) + Math.abs(turn) + Math.abs(strafe), 1);
-        double topLeftPow = (drive + turn + strafe) / denominator;
-        double backLeftPow = (drive + turn - strafe) / denominator;
-        double topRightPow = (drive - turn - strafe) / denominator;
-        double backRightPow = (drive - turn + strafe) / denominator;
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double topLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double topRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        topLeft.setPower(topLeftPower);
+        backLeft.setPower(backLeftPower);
+        topRight.setPower(topRightPower);
+        backRight.setPower(backRightPower);
         while (timer.milliseconds() <= milliseconds) {
-            setDrivePowers(topLeftPow, backLeftPow, topRightPow, backRightPow);
+            setDrivePowers(topLeftPower, backLeftPower, topRightPower, backRightPower);
         }
     }
 

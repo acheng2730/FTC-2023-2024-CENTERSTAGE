@@ -13,6 +13,10 @@ public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
         initHardware();
 
         telemetry.addData("Status","Initialized");
+        telemetry.addData("topLeftPos: ", topLeftEncoderPos);
+        telemetry.addData("topRightPos: ", topRightEncoderPos);
+        telemetry.addData("backLeftPos: ", backLeftEncoderPos);
+        telemetry.addData("backRightPos: ", backRightEncoderPos);
         telemetry.update();
 
         topLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -36,7 +40,7 @@ public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
         boolean toggleMovementCR = false;
 
         while (opModeIsActive()) {
-            telemetry.addData("Wrist Pos: ", clawAngle.getPosition());
+            telemetry.addData("Wrist Pos: ", clawAnglePos);
             telemetry.update();
             double drive = gamepad1.left_stick_y * -1;
             double turn = gamepad1.right_stick_x;

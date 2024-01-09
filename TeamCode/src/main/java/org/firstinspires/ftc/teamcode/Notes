@@ -1,0 +1,20 @@
+1/9 - fieldcentric: imu = hardwareMap.get(IMU.class, "imu"); --> imu = hardwareMap.get(IMU.class, "imu 1");
+should be old expansion hub - FIND ONE
+    - make sure the mecanums are aligned properly
+    - make sure method 2 works
+    - ask Patrick/Logan if they want to automate any driving
+    - plug in encoders
+
+
+ENCODER MODES:
+    - When using RUN_TO_POSITION, make sure to STOP_AND_RESET_ENCODER for that motor in init
+        - this season, will probably only use during auton
+    - Wheels are NeveRest 40, arm is 60
+    - 40: 1120 ticks/rev
+    - 60: 1680 ticks/rev
+
+
+QUESTIONS:
+    - Not running arm to position during teleop, how to use pid to counteract gravity?
+    - Any teleop uses for encoders?
+    - to clarify, what encoder methods does ctrl alt ftc use when making pid methods?

@@ -62,8 +62,7 @@ public class Auton_IMU extends BaseLinearOpMode {
         // Compute how much you need to turn to maintain that angle
         double currAngle = getAngle();
         double angleDiff = normalize(currAngle - angle);
-        double turn = Range.clip(angleDiff * 0.01, -1, 1) * 1.1; // multiply by some constant
-        // so the robot turns smoothly
+        double turn = Range.clip(angleDiff * 0.01, -1, 1);
 
 
         double rotX = drive * Math.cos(botHeading) - strafe * Math.sin(botHeading);
