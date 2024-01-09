@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //note: cannot set very accurate positions without gyro
+//last resort
 
 @Autonomous(name = "AutonomousNoGyro")
 public class Auton_noGyro extends BaseLinearOpMode {
@@ -26,17 +27,17 @@ public class Auton_noGyro extends BaseLinearOpMode {
 
         waitForStart();
 
-        driveFor(1, 0, 0, 3000, timer);
+        driveFor(1, 1, 30, 3000, timer);
     }
 
-    public void driveFor(double y, double x, double rx, int milliseconds, ElapsedTime timer) {
+    public void driveFor(double y, double x, double t, int milliseconds, ElapsedTime timer) {
         x *= 1.1;
         timer.reset();
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double topLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double topRightPower = (y - x - rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(t), 1);
+        double topLeftPower = (y + x + Math.toRadians(t)) / denominator;
+        double backLeftPower = (y - x + Math.toRadians(t)) / denominator;
+        double topRightPower = (y - x - Math.toRadians(t)) / denominator;
+        double backRightPower = (y + x - Math.toRadians(t)) / denominator;
 
         topLeft.setPower(topLeftPower);
         backLeft.setPower(backLeftPower);
@@ -50,7 +51,7 @@ public class Auton_noGyro extends BaseLinearOpMode {
     public void setDrivePowers(double backLeftPow, double topLeftPow, double backRightPow, double topRightPow) {
         backLeft.setPower(backLeftPow);
         topLeft.setPower(topLeftPow);
-        backLeft.setPower(backLeftPow);
+        backRight.setPower(backRightPow);
         topRight.setPower(topRightPow);
     }
 }

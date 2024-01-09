@@ -19,16 +19,6 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
     Servo clawAngle, clawLeft, clawRight;
     ElapsedTime timer = new ElapsedTime();
 
-    int topLeftEncoderPos = topLeft.getCurrentPosition();
-    int topRightEncoderPos = topRight.getCurrentPosition();
-    int backLeftEncoderPos = backLeft.getCurrentPosition();
-    int backRightEncoderPos = backRight.getCurrentPosition();
-    int arm1EncoderPos = arm1.getCurrentPosition();
-    int arm2EncoderPos = arm2.getCurrentPosition();
-    double launcherPos = planeLauncher.getPosition();
-    double clawAnglePos = clawAngle.getPosition();
-    double clawLeftPos = clawLeft.getPosition();
-    double clawRightPos = clawRight.getPosition();
     public void initHardware() throws InterruptedException {
         // Hubs
         List<LynxModule> allHubs;
@@ -48,12 +38,25 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         clawLeft = hardwareMap.get(Servo.class, "clawLeft");
         clawRight = hardwareMap.get(Servo.class, "clawRight");
 
+        topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        topLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        topRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
     }
-
 
     @Override
     public abstract void runOpMode() throws InterruptedException;

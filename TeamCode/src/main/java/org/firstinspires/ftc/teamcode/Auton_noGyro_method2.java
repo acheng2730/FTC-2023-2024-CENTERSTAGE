@@ -7,8 +7,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 //note: use for pid testing
 
-@Autonomous(name = "AutonomousNoGyro")
-public class Auton_noGyro_Method2 extends BaseLinearOpMode {
+@Autonomous(name = "AutonomousNoGyro_method2")
+public class Auton_noGyro_method2 extends BaseLinearOpMode {
+    ElapsedTime timer = new ElapsedTime();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,6 +27,7 @@ public class Auton_noGyro_Method2 extends BaseLinearOpMode {
 
         waitForStart();
 
+        driveFor(1,1,90,timer,3000);
     }
 
     public void driveFor(double x, double y, double t, ElapsedTime timer, int ms) {
@@ -34,10 +36,10 @@ public class Auton_noGyro_Method2 extends BaseLinearOpMode {
         x_rotated *= 1.1;
         double y_rotated = x * Math.sin(t - Math.PI / 4) + y * Math.cos(t - Math.PI / 4);
         while (timer.milliseconds() < ms) {
-            topLeft.setPower(x_rotated + y_rotated + t);
-            backLeft.setPower(x_rotated - y_rotated + t);
-            topRight.setPower(x_rotated - y_rotated - t);
-            backRight.setPower(x_rotated + y_rotated - t);
+            topLeft.setPower(x_rotated + y_rotated + Math.toRadians(t));
+            backLeft.setPower(x_rotated - y_rotated + Math.toRadians(t));
+            topRight.setPower(x_rotated - y_rotated - Math.toRadians(t));
+            backRight.setPower(x_rotated + y_rotated - Math.toRadians(t));
         }
     }
 }

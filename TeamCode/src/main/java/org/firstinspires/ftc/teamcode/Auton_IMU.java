@@ -4,16 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 @Autonomous(name = "Autonomous-IMU")
 public class Auton_IMU extends BaseLinearOpMode {
+    double conversionFactor = 162.15, prevTime = 0;
+    ElapsedTime driveTime = new ElapsedTime();
+    double curPoseY = 0; // inches
+    double curPoseX = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
@@ -24,64 +25,54 @@ public class Auton_IMU extends BaseLinearOpMode {
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        ElapsedTime timer = new ElapsedTime();
-
         sleep(500);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
 
-        timer.reset();
-        while (timer.milliseconds() <= 3000) {
-            driveFieldCentric(1, 0, 0);
-        }
+        updatePosition();
+
+        driveFieldCentric(2000, 2000, 180);
     }
 
-    public static double normalize(double degrees) {
-        double normalized_angle = AngleUnit.normalizeDegrees(degrees);
-        if (normalized_angle > 180) {
-            normalized_angle -= 360;
-        }
-        return normalized_angle;
+    public void driveFieldCentric(int xTarget, int yTarget, int tTarget) {
+
+        PIDController xControl = new PIDController(1, 0, 0);
+        PIDController yControl = new PIDController(1, 0, 0);
+        PIDController thetaControl = new PIDController(1, 0, 0);
+
+        double angle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        double x = xControl.calculate(xTarget, curPoseX);
+        double y = yControl.calculate(yTarget, curPoseY);
+        double t = thetaControl.calculate(tTarget, Math.toDegrees(AngleUnit.normalizeRadians(angle)));
+        double x_rotated = x * Math.cos(angle) - y * Math.sin(angle);
+        double y_rotated = x * Math.sin(angle) + y * Math.cos(angle);
+
+        double denominator = Math.max(Math.abs(y_rotated) + Math.abs(x_rotated) + Math.abs(t), 1);
+        topLeft.setPower((y_rotated + x_rotated + t) / denominator);
+        backLeft.setPower((y_rotated - x_rotated + t) / denominator);
+        topRight.setPower((y_rotated - x_rotated - t) / denominator);
+        backRight.setPower((y_rotated + x_rotated - t) / denominator);
     }
 
-    public double getAngle() {
-        Orientation angles =
-                imu.getRobotOrientation(
-                        AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // ZYX is Original
-        return angles.firstAngle;
-    }
+    public void updatePosition() {
+        double angle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        // apply mecanum kinematic model (with wheel velocities [ticks per sec])
+        double xV = (topLeft.getVelocity() + topRight.getVelocity() + backLeft.getVelocity() + backRight.getVelocity()) * 0.482;
 
-    // Drive or Strafe to at some power while turning to some angle.
-    public void driveFieldCentric(double drive, double angle, double strafe) {
-        // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
-        double topRightPow, backRightPow, topLeftPow, backLeftPow;
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double yV = (-topLeft.getVelocity() + topRight.getVelocity() + backLeft.getVelocity() - backRight.getVelocity()) * 0.482;
 
-        // Compute how much you need to turn to maintain that angle
-        double currAngle = getAngle();
-        double angleDiff = normalize(currAngle - angle);
-        double turn = Range.clip(angleDiff * 0.01, -1, 1);
+        // rotate the vector
+        double nx = (xV * Math.cos(angle)) - (yV * Math.sin(angle));
+        double nY = (xV * Math.sin(angle)) + (yV * Math.cos(angle));
+        xV = nx;
+        yV = nY;
 
-
-        double rotX = drive * Math.cos(botHeading) - strafe * Math.sin(botHeading);
-        double rotY = drive * Math.sin(botHeading) + strafe * Math.cos(botHeading);
-
-        // Do the math found in GM0
-        double denominator = Math.max(Math.abs(strafe) + Math.abs(drive) + Math.abs(turn), 1);
-        topLeftPow = (rotY + rotX + turn) / denominator;
-        backLeftPow = (rotY - rotX + turn) / denominator;
-        topRightPow = (rotY - rotX - turn) / denominator;
-        backRightPow = (rotY + rotX - turn) / denominator;
-
-        setDrivePowers(backLeftPow, topLeftPow, backRightPow, topRightPow);
-    }
-
-    public void setDrivePowers(double backLeftPow, double topLeftPow, double backRightPow, double topRightPow) {
-        backLeft.setPower(backLeftPow);
-        topLeft.setPower(topLeftPow);
-        backRight.setPower(backRightPow);
-        topRight.setPower(topRightPow);
+        // integrate velocity over time
+        curPoseY += (yV * (driveTime.seconds() - prevTime)) / conversionFactor; // <-- Tick to inch conversion factor
+        curPoseX += (xV * (driveTime.seconds() - prevTime)) / conversionFactor;
+        prevTime = driveTime.seconds();
     }
 }

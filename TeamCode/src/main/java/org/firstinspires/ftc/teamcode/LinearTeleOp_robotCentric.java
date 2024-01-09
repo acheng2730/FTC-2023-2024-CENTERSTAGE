@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "robotCentric")
@@ -11,13 +13,6 @@ public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-
-        telemetry.addData("Status","Initialized");
-        telemetry.addData("topLeftPos: ", topLeftEncoderPos);
-        telemetry.addData("topRightPos: ", topRightEncoderPos);
-        telemetry.addData("backLeftPos: ", backLeftEncoderPos);
-        telemetry.addData("backRightPos: ", backRightEncoderPos);
-        telemetry.update();
 
         topLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -40,6 +35,21 @@ public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
         boolean toggleMovementCR = false;
 
         while (opModeIsActive()) {
+            int topLeftEncoderPos = topLeft.getCurrentPosition();
+            int topRightEncoderPos = topRight.getCurrentPosition();
+            int backLeftEncoderPos = backLeft.getCurrentPosition();
+            int backRightEncoderPos = backRight.getCurrentPosition();
+            int arm1EncoderPos = arm1.getCurrentPosition();
+            int arm2EncoderPos = arm2.getCurrentPosition();
+            double launcherPos = planeLauncher.getPosition();
+            double clawAnglePos = clawAngle.getPosition();
+            double clawLeftPos = clawLeft.getPosition();
+            double clawRightPos = clawRight.getPosition();
+            telemetry.addData("Status","Initialized");
+            telemetry.addData("topLeftPos: ", topLeftEncoderPos);
+            telemetry.addData("topRightPos: ", topRightEncoderPos);
+            telemetry.addData("backLeftPos: ", backLeftEncoderPos);
+            telemetry.addData("backRightPos: ", backRightEncoderPos);
             telemetry.addData("Wrist Pos: ", clawAnglePos);
             telemetry.update();
             double drive = gamepad1.left_stick_y * -1;

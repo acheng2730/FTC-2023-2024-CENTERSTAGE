@@ -1,13 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 // A more accurate implementation of Mecanum drive, using target angle/power as inputs instead of direct joystick values
-@TeleOp(name = "robotCentric")
-public class LinearTeleOp_robotCentricMethod2 extends BaseLinearOpMode {
+@TeleOp(name = "robotCentric-method2")
+public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
+    double curPoseY = 0, curPoseX = 0;
+    ElapsedTime driveTime = new ElapsedTime();
+    double prevTime = 0;
+    double conversionFactor = 162.15;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,8 +30,6 @@ public class LinearTeleOp_robotCentricMethod2 extends BaseLinearOpMode {
 
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
@@ -43,6 +50,21 @@ public class LinearTeleOp_robotCentricMethod2 extends BaseLinearOpMode {
         boolean toggleMovementCR = false;
 
         while (opModeIsActive()) {
+            int topLeftEncoderPos = topLeft.getCurrentPosition();
+            int topRightEncoderPos = topRight.getCurrentPosition();
+            int backLeftEncoderPos = backLeft.getCurrentPosition();
+            int backRightEncoderPos = backRight.getCurrentPosition();
+            int arm1EncoderPos = arm1.getCurrentPosition();
+            int arm2EncoderPos = arm2.getCurrentPosition();
+            double launcherPos = planeLauncher.getPosition();
+            double clawAnglePos = clawAngle.getPosition();
+            double clawLeftPos = clawLeft.getPosition();
+            double clawRightPos = clawRight.getPosition();
+
+            updatePosition();
+
+            telemetry.addData("curPoseX: ", curPoseX);
+            telemetry.addData("curPoseY: ", curPoseY);
             telemetry.addData("Wrist Pos: ", clawAnglePos);
             telemetry.addData("topLeftPos: ", topLeftEncoderPos);
             telemetry.addData("topRightPos: ", topRightEncoderPos);
@@ -136,5 +158,23 @@ public class LinearTeleOp_robotCentricMethod2 extends BaseLinearOpMode {
             }
             lastMovementWrist = toggleWrist;
         }
+    }
+    public void updatePosition() {
+        double angle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        // apply mecanum kinematic model (with wheel velocities [ticks per sec])
+        double xV = (topLeft.getVelocity() + topRight.getVelocity() + backLeft.getVelocity() + backRight.getVelocity()) * 0.482;
+
+        double yV = (-topLeft.getVelocity() + topRight.getVelocity() + backLeft.getVelocity() - backRight.getVelocity()) * 0.482;
+
+        // rotate the vector
+        double nx = (xV * Math.cos(angle)) - (yV * Math.sin(angle));
+        double nY = (xV * Math.sin(angle)) + (yV * Math.cos(angle));
+        xV = nx;
+        yV = nY;
+
+        // integrate velocity over time
+        curPoseY += (yV * (driveTime.seconds() - prevTime)) / conversionFactor; // <-- Tick to inch conversion factor
+        curPoseX += (xV * (driveTime.seconds() - prevTime)) / conversionFactor;
+        prevTime = driveTime.seconds();
     }
 }

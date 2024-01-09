@@ -25,15 +25,6 @@ public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Retrieve the IMU from the hardware map
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
-
-
         waitForStart();
 
         if (isStopRequested()) return;
@@ -51,37 +42,47 @@ public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
         boolean toggleMovementCR = false;
 
         while (opModeIsActive()) {
+            int topLeftEncoderPos = topLeft.getCurrentPosition();
+            int topRightEncoderPos = topRight.getCurrentPosition();
+            int backLeftEncoderPos = backLeft.getCurrentPosition();
+            int backRightEncoderPos = backRight.getCurrentPosition();
+            int arm1EncoderPos = arm1.getCurrentPosition();
+            int arm2EncoderPos = arm2.getCurrentPosition();
+            double launcherPos = planeLauncher.getPosition();
+            double clawAnglePos = clawAngle.getPosition();
+            double clawLeftPos = clawLeft.getPosition();
+            double clawRightPos = clawRight.getPosition();
+
             telemetry.addData("Wrist pos: ", clawAnglePos);
             telemetry.addData("topLeftPos: ", topLeftEncoderPos);
             telemetry.addData("topRightPos: ", topRightEncoderPos);
             telemetry.addData("backLeftPos: ", backLeftEncoderPos);
             telemetry.addData("backRightPos: ", backRightEncoderPos);
-            telemetry.update();
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            double t = gamepad1.right_stick_x;
 
             if (gamepad1.options) {
                 imu.resetYaw();
             }
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double angle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-            telemetry.addData("IMU heading: ", botHeading);
+            telemetry.addData("IMU heading: ", Math.toDegrees(angle));
             telemetry.update();
 
             // Rotate the movement direction counter to the bot's rotation
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+            double rotX = x * Math.cos(angle) - y * Math.sin(angle);
+            double rotY = x * Math.sin(angle) + y * Math.cos(angle);
 
             rotX = rotX * 1.1;  // Counteract imperfect strafing
 
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double topLeftPow = (rotY + rotX + rx) / denominator;
-            double backLeftPow = (rotY - rotX + rx) / denominator;
-            double topRightPow = (rotY - rotX - rx) / denominator;
-            double backRightPow = (rotY + rotX - rx) / denominator;
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(t), 1);
+            double topLeftPow = (rotY + rotX + t) / denominator;
+            double backLeftPow = (rotY - rotX + t) / denominator;
+            double topRightPow = (rotY - rotX - t) / denominator;
+            double backRightPow = (rotY + rotX - t) / denominator;
 
             topLeft.setPower(topLeftPow);
             backLeft.setPower(backLeftPow);
