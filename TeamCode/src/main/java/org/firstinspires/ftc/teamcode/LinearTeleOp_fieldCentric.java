@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // A field centric mecanum drivetrain, which controls the robot relative to the driver's POV and not the robot.
 // It allows a more natural way to perform rotation while strafing and other evasive maneuvers
 // by automatically correcting robot heading.
+// MUST READ: https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
 @TeleOp(name = "fieldCentric")
 public class LinearTeleOp_fieldCentric extends BaseLinearOpMode {
 

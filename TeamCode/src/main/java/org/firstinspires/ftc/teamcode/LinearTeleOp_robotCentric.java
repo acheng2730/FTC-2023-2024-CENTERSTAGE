@@ -111,7 +111,7 @@ public class LinearTeleOp_robotCentric extends BaseLinearOpMode {
             if (toggleWrist && !lastMovementWrist) {
                 toggleMovementWrist = !toggleMovementWrist;
                 if (toggleMovementWrist) {
-                    clawAngle.setPosition(0.5);
+                    clawAngle.setPosition(0);
                 } else {
                     clawAngle.setPosition(1);
                 }

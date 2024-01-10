@@ -13,10 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // A more accurate implementation of Mecanum drive, using target angle/power as inputs instead of direct joystick values
 @TeleOp(name = "robotCentric-method2")
 public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
-    double curPoseY = 0, curPoseX = 0;
+    double curPoseY = 0, curPoseX = 0; // Current position on field in inches
     ElapsedTime driveTime = new ElapsedTime();
     double prevTime = 0;
-    double conversionFactor = 162.15;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,12 +23,6 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
-        topLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
 
@@ -72,7 +65,11 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             telemetry.addData("backRightPos: ", backRightEncoderPos);
             telemetry.update();
 
-            // Mecanum drivetrain
+
+            // Mecanum drivetrain implementation
+            //MUST READ: https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
+            //https://www.youtube.com/watch?v=gnSW2QpkGXQ
+
             double strafe = gamepad1.left_stick_x * 1.1;
             double drive = gamepad1.left_stick_y * -1;
             double turn = gamepad1.right_stick_x;
@@ -83,12 +80,19 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             double sin = Math.sin(theta - Math.PI / 4);
             double cos = Math.cos(theta - Math.PI / 4); // Rotating the bot heading here by -45 degrees makes the
             // mecanum wheels' vectors the x,y components of the power vector
-            double max = Math.max(Math.abs(sin), Math.abs(cos)); // Avoid power clipping
+            double max = Math.max(Math.abs(sin), Math.abs(cos)); // Scale motors so at least one is max power
 
             double topLeftPow = power * cos / max + turn;
             double backLeftPow = power * sin / max + turn;
             double topRightPow = power * sin / max - turn;
             double backRightPow = power * cos / max - turn;
+
+            if ((power+Math.abs(turn)) > 1) { // Avoid power clipping
+                topLeftPow /= power+turn;
+                backLeftPow /= power+turn;
+                topRightPow /= power+turn;
+                backRightPow /= power+turn;
+            }
 
             topLeft.setPower(topLeftPow);
             backLeft.setPower(backLeftPow);
@@ -96,11 +100,12 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             backRight.setPower(backRightPow);
 
 
-            arm1.setDirection(DcMotorSimple.Direction.REVERSE); // We use a motor on each side of the arm to support its weight better
-            double armPower = (-.2 * gamepad1.left_trigger + .35 * gamepad1.right_trigger); // Slow the downwards movement b/c gravity
+            arm1.setDirection(DcMotorSimple.Direction.REVERSE); // We used a motor on each side of the arm to support its weight better
+            double armPower = (-.2 * gamepad1.left_trigger + .35 * gamepad1.right_trigger); // Slower downwards movement b/c gravity
 
             arm1.setPower(armPower);
             arm2.setPower(armPower);
+
 
             // Continuation of boolean logic mentioned above:
             // First press, Current gets set to TRUE, the if() loop runs, and toggle gets set to TRUE. Servo moves to TRUE position.
@@ -146,12 +151,12 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             lastMovementCR = rightClawCurrentMovement;
 
             // The wrist has 2 positions: one for scoring and one for collecting pixels.
-            // In order to get full range of motion, we used a servo programmer.
+            // In order to get 360 degree range of motion, we used a servo programmer.
             boolean toggleWrist = gamepad1.x;
             if (toggleWrist && !lastMovementWrist) {
                 toggleMovementWrist = !toggleMovementWrist;
                 if (toggleMovementWrist) {
-                    clawAngle.setPosition(0.5);
+                    clawAngle.setPosition(0);
                 } else {
                     clawAngle.setPosition(1);
                 }
@@ -159,7 +164,8 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             lastMovementWrist = toggleWrist;
         }
     }
-    public void updatePosition() {
+    public void updatePosition() { // uses encoders to determine position on the field
+        // MUST READ: https://ftc-tech-toolbox.vercel.app/docs/odo/Mecanum
         double angle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         // apply mecanum kinematic model (with wheel velocities [ticks per sec])
         double xV = (topLeft.getVelocity() + topRight.getVelocity() + backLeft.getVelocity() + backRight.getVelocity()) * 0.482;

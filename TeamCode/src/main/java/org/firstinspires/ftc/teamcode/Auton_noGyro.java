@@ -27,7 +27,11 @@ public class Auton_noGyro extends BaseLinearOpMode {
 
         waitForStart();
 
-        driveFor(1, 1, 30, 3000, timer);
+        driveFor(1, 1, 0, 1500, timer);
+        driveFor(1, 0, 0, 1500, timer);
+        driveFor(0, 1, 0, 1500, timer);
+        driveFor(0, 0, 90, 1500, timer);
+
     }
 
     public void driveFor(double y, double x, double t, int milliseconds, ElapsedTime timer) {

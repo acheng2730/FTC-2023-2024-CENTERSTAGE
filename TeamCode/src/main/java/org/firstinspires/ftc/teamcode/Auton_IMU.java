@@ -12,11 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // Drives to a certain spot on the field, not a certain distance
 @Autonomous(name = "Autonomous-IMU")
 public class Auton_IMU extends BaseLinearOpMode {
-    double conversionFactor = 162.15; // NeveRest 40 motor ticks/inch
     double prevTime = 0;
     ElapsedTime driveTime = new ElapsedTime();
-    double curPoseY = 0; // inches
-    double curPoseX = 0;
+    double curPoseY = 0, curPoseX = 0; // Current position on field in inches
 
     @Override
     public void runOpMode() throws InterruptedException {
