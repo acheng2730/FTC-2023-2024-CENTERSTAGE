@@ -7,8 +7,14 @@ should be old expansion hub - FIND ONE
     - plug in encoders
     - PRAY TO GOD FTCDASHBOARD AND PID CONTROLLERS WORK (they wont)
 
+1/10 - find old expansion hub
+     - find servo programmer
+     - figure out ticks to inches
+     - figure out tTarget
+     - make sure curPoseX,Y,t are actually correct
 
-ENCODER MODES:
+
+ENCODER NOTES:
     - When using RUN_TO_POSITION, make sure to STOP_AND_RESET_ENCODER for that motor in init
         - this season, will probably only use during auton
     - Wheels are NeveRest 40, arm is 60
