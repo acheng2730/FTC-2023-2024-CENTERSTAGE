@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+// Basic PID Controller with integral windup and derivative noise mitigation
+// Derivative noise countered by low pass filter
+// Read CTRL-ALT-FTC documentation for a detailed breakdown of PID controllers
 public class PIDController {
     private double Kp, Ki, Kd;
     public PIDController(double Kp, double Ki, double Kd) {
@@ -16,6 +19,7 @@ public class PIDController {
         double lastError = 0;
         double lastReference = reference;
         double a = 0.8; // a can be anything from 0 < a < 1
+                        // tune filter in FTC Dash by changing a
         double previousFilterEstimate = 0;
         double currentFilterEstimate = 0;
         double error = reference - state;

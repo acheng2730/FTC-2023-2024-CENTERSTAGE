@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-
+// Uses Rev IMU and encoders for localization
+// PID controllers for X, Y, robot angle - tuned with FTC Dashboard
+// Drives to a certain spot on the field, not a certain distance
 @Autonomous(name = "Autonomous-IMU")
 public class Auton_IMU extends BaseLinearOpMode {
-    double conversionFactor = 162.15, prevTime = 0;
+    double conversionFactor = 162.15; // NeveRest 40 motor ticks/inch
+    double prevTime = 0;
     ElapsedTime driveTime = new ElapsedTime();
     double curPoseY = 0; // inches
     double curPoseX = 0;
