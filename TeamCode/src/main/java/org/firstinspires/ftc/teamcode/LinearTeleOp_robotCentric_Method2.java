@@ -42,6 +42,9 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
         boolean lastMovementCR = false;
         boolean toggleMovementCR = false;
 
+        boolean lastModeHook = false;
+        boolean toggleModeHook = false;
+
         while (opModeIsActive()) {
             int topLeftEncoderPos = topLeft.getCurrentPosition();
             int topRightEncoderPos = topRight.getCurrentPosition();
@@ -63,12 +66,13 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             telemetry.addData("topRightPos: ", topRightEncoderPos);
             telemetry.addData("backLeftPos: ", backLeftEncoderPos);
             telemetry.addData("backRightPos: ", backRightEncoderPos);
+            telemetry.addData("Hook Mode: ", hook.getZeroPowerBehavior());
             telemetry.update();
 
 
             // Mecanum drivetrain implementation
-            //MUST READ: https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
-            //https://www.youtube.com/watch?v=gnSW2QpkGXQ
+            // MUST READ: https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
+            // https://www.youtube.com/watch?v=gnSW2QpkGXQ
 
             double strafe = gamepad1.left_stick_x * 1.1;
             double drive = gamepad1.left_stick_y * -1;
@@ -101,17 +105,28 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
 
 
             arm1.setDirection(DcMotorSimple.Direction.REVERSE); // We used a motor on each side of the arm to support its weight better
-            double armPower = (-.2 * gamepad1.left_trigger + .35 * gamepad1.right_trigger); // Slower downwards movement b/c gravity
+            double armPower = (-.2 * gamepad1.left_trigger + .5 * gamepad1.right_trigger); // Slower downwards movement b/c gravity
 
             arm1.setPower(armPower);
             arm2.setPower(armPower);
-
 
             // Continuation of boolean logic mentioned above:
             // First press, Current gets set to TRUE, the if() loop runs, and toggle gets set to TRUE. Servo moves to TRUE position.
             // Immediately after the press, CurrentMovement becomes FALSE and the outer if() loop does not run.
             // If the button is pressed again, Current is TRUE, the if() loop runs, now setting the toggle to FALSE.
             // Servo moves to FALSE position.
+
+            // When hanging, use BRAKE, when playing, use FLOAT so driver 2 doesn't have to feed line while scoring.
+            boolean hookCurrentMode = gamepad2.start;
+            if(hookCurrentMode && !lastModeHook) {
+                toggleModeHook = !toggleModeHook;
+                if(toggleModeHook) {
+                    hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                } else {
+                    hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                }
+            }
+            hook.setPower(6 * gamepad1.right_trigger - 12 * gamepad1.left_trigger + gamepad2.right_trigger - gamepad2.left_trigger);
 
             // We use a screw on a servo to hold and release a rubber band that propels our paper airplane
             planeLauncher.setDirection(Servo.Direction.REVERSE);

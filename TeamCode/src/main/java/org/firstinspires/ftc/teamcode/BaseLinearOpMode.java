@@ -18,6 +18,7 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
     public IMU imu;
     DcMotorEx topLeft, topRight, backLeft, backRight;
     DcMotorEx arm1, arm2;
+    DcMotorEx hook;
     Servo planeLauncher;
     Servo clawAngle, clawLeft, clawRight;
     ElapsedTime timer = new ElapsedTime();
@@ -37,6 +38,7 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
         arm1 = hardwareMap.get(DcMotorEx.class, "arm1");
         arm2 = hardwareMap.get(DcMotorEx.class, "arm2");
+        hook = hardwareMap.get(DcMotorEx.class, "hook");
         planeLauncher = hardwareMap.get(Servo.class, "launcher");
         clawAngle = hardwareMap.get(Servo.class, "clawAngle");
         clawLeft = hardwareMap.get(Servo.class, "clawLeft");
@@ -48,18 +50,22 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // sets encoder values to 0 in init
+        arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hook.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // sets encoder values to 0 in init
         topLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         topRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // does not stop encoder readings, but allows us to run motors at full power
+        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // does not stop encoder readings, but allows us to run motors at full power
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
