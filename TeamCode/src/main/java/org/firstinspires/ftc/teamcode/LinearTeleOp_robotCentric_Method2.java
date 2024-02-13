@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -36,11 +34,8 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
         boolean lastMovementWrist = false;
         boolean toggleMovementWrist = false;
 
-        boolean lastMovementCL = false;
-        boolean toggleMovementCL = false;
-
-        boolean lastMovementCR = false;
-        boolean toggleMovementCR = false;
+        boolean lastMovementClaw = false;
+        boolean toggleMovementClaw = false;
 
         boolean lastModeHook = false;
         boolean toggleModeHook = false;
@@ -91,11 +86,11 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             double topRightPow = power * sin / max - turn;
             double backRightPow = power * cos / max - turn;
 
-            if ((power+Math.abs(turn)) > 1) { // Avoid power clipping
-                topLeftPow /= power+turn;
-                backLeftPow /= power+turn;
-                topRightPow /= power+turn;
-                backRightPow /= power+turn;
+            if ((power + Math.abs(turn)) > 1) { // Avoid power clipping
+                topLeftPow /= power + turn;
+                backLeftPow /= power + turn;
+                topRightPow /= power + turn;
+                backRightPow /= power + turn;
             }
 
             topLeft.setPower(topLeftPow);
@@ -118,9 +113,9 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
 
             // When hanging, use BRAKE, when playing, use FLOAT so driver 2 doesn't have to feed line while scoring.
             boolean hookCurrentMode = gamepad2.start;
-            if(hookCurrentMode && !lastModeHook) {
+            if (hookCurrentMode && !lastModeHook) {
                 toggleModeHook = !toggleModeHook;
-                if(toggleModeHook) {
+                if (toggleModeHook) {
                     hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 } else {
                     hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -141,29 +136,20 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             }
             lastMovementLauncher = launcherCurrentMovement;
 
-            // Left and right claws can move independently of each other
-            boolean leftClawCurrentMovement = gamepad1.left_bumper;
-            if (leftClawCurrentMovement && !lastMovementCL) {
-                toggleMovementCL = !toggleMovementCL;
-                if (toggleMovementCL) {
+            // Claw hands - considered letting left and right move independently, but rebuilt the
+            // claw and decided not to.
+            boolean clawCurrentMovement = gamepad1.left_bumper;
+            if (clawCurrentMovement && !lastMovementClaw) {
+                toggleMovementClaw = !toggleMovementClaw;
+                if (toggleMovementClaw) {
                     clawLeft.setPosition(.15); // closed position
+                    clawRight.setPosition(.65);
                 } else {
                     clawLeft.setPosition(.35); // open position
+                    clawRight.setPosition(.85);
                 }
             }
-            lastMovementCL = leftClawCurrentMovement;
-
-            // Opposite of left claw
-            boolean rightClawCurrentMovement = gamepad1.right_bumper;
-            if (rightClawCurrentMovement && !lastMovementCR) {
-                toggleMovementCR = !toggleMovementCR;
-                if (toggleMovementCR) {
-                    clawRight.setPosition(.65); // open position
-                } else {
-                    clawRight.setPosition(.85); // closed position
-                }
-            }
-            lastMovementCR = rightClawCurrentMovement;
+            lastMovementClaw = clawCurrentMovement;
 
             // The wrist has 2 positions: one for scoring and one for collecting pixels.
             // In order to get 360 degree range of motion, we used a servo programmer.
@@ -179,6 +165,7 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             lastMovementWrist = toggleWrist;
         }
     }
+
     public void updatePosition() { // uses encoders to determine position on the field
         // MUST READ: https://ftc-tech-toolbox.vercel.app/docs/odo/Mecanum
         double angle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
