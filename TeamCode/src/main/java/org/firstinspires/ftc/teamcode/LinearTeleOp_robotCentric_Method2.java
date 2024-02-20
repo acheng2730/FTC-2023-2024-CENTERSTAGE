@@ -31,8 +31,11 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
         boolean lastMovementLauncher = false;
         boolean toggleMovementLauncher = false;
 
-        boolean lastMovementWrist = false;
-        boolean toggleMovementWrist = false;
+        boolean lastMovementWristUp = false;
+        boolean toggleMovementWristUp = false;
+
+        boolean lastMovementWristDown = false;
+        boolean toggleMovementWristDown = false;
 
         boolean lastMovementClaw = false;
         boolean toggleMovementClaw = false;
@@ -57,6 +60,7 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             telemetry.addData("curPoseX: ", curPoseX);
             telemetry.addData("curPoseY: ", curPoseY);
             telemetry.addData("Wrist Pos: ", clawAnglePos);
+            telemetry.addData("Claw Pos (L/R): ", clawLeftPos + "/" + clawRightPos);
             telemetry.addData("topLeftPos: ", topLeftEncoderPos);
             telemetry.addData("topRightPos: ", topRightEncoderPos);
             telemetry.addData("backLeftPos: ", backLeftEncoderPos);
@@ -121,7 +125,7 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
                     hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 }
             }
-            hook.setPower(6 * gamepad1.right_trigger - 12 * gamepad1.left_trigger + gamepad2.right_trigger - gamepad2.left_trigger);
+            hook.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
             // We use a screw on a servo to hold and release a rubber band that propels our paper airplane
             planeLauncher.setDirection(Servo.Direction.REVERSE);
@@ -142,27 +146,34 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             if (clawCurrentMovement && !lastMovementClaw) {
                 toggleMovementClaw = !toggleMovementClaw;
                 if (toggleMovementClaw) {
-                    clawLeft.setPosition(.15); // closed position
-                    clawRight.setPosition(.65);
+                    clawLeft.setPosition(0); // closed position
+                    clawRight.setPosition(1);
                 } else {
-                    clawLeft.setPosition(.35); // open position
-                    clawRight.setPosition(.85);
+                    clawLeft.setPosition(.3); // open position
+                    clawRight.setPosition(.7);
                 }
             }
             lastMovementClaw = clawCurrentMovement;
 
             // The wrist has 2 positions: one for scoring and one for collecting pixels.
             // In order to get 360 degree range of motion, we used a servo programmer.
-            boolean toggleWrist = gamepad1.x;
-            if (toggleWrist && !lastMovementWrist) {
-                toggleMovementWrist = !toggleMovementWrist;
-                if (toggleMovementWrist) {
-                    clawAngle.setPosition(0);
-                } else {
-                    clawAngle.setPosition(1);
+            boolean toggleWristUp = gamepad1.x;
+            if (toggleWristUp && !lastMovementWristUp) {
+                toggleMovementWristUp = !toggleMovementWristUp;
+                if (toggleMovementWristUp) {
+                    clawAngle.setPosition(clawAngle.getPosition()+.05);
                 }
             }
-            lastMovementWrist = toggleWrist;
+            lastMovementWristUp = toggleWristUp;
+
+            boolean toggleWristDown = gamepad1.y;
+            if (toggleWristDown && !lastMovementWristDown) {
+                toggleMovementWristDown = !toggleMovementWristDown;
+                if (toggleMovementWristDown) {
+                    clawAngle.setPosition(clawAngle.getPosition()-.05);
+                }
+            }
+            lastMovementWristDown = toggleWristDown;
         }
     }
 
