@@ -31,12 +31,6 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
         boolean lastMovementLauncher = false;
         boolean toggleMovementLauncher = false;
 
-        boolean lastMovementWristUp = false;
-        boolean toggleMovementWristUp = false;
-
-        boolean lastMovementWristDown = false;
-        boolean toggleMovementWristDown = false;
-
         boolean lastMovementClaw = false;
         boolean toggleMovementClaw = false;
 
@@ -155,25 +149,15 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             }
             lastMovementClaw = clawCurrentMovement;
 
-            // The wrist has 2 positions: one for scoring and one for collecting pixels.
-            // In order to get 360 degree range of motion, we used a servo programmer.
-            boolean toggleWristUp = gamepad1.x;
-            if (toggleWristUp && !lastMovementWristUp) {
-                toggleMovementWristUp = !toggleMovementWristUp;
-                if (toggleMovementWristUp) {
-                    clawAngle.setPosition(clawAngle.getPosition()+.05);
-                }
+            // Allows us to rotate a servo "like a motor"
+            // We used a servo programmer to limit how far the wrist can rotate in each direction
+            if (gamepad1.x) {
+                clawAngle.setPosition(clawAnglePos + .01);
             }
-            lastMovementWristUp = toggleWristUp;
 
-            boolean toggleWristDown = gamepad1.y;
-            if (toggleWristDown && !lastMovementWristDown) {
-                toggleMovementWristDown = !toggleMovementWristDown;
-                if (toggleMovementWristDown) {
-                    clawAngle.setPosition(clawAngle.getPosition()-.05);
-                }
+            if (gamepad1.y) {
+                clawAngle.setPosition(clawAnglePos + .01);
             }
-            lastMovementWristDown = toggleWristDown;
         }
     }
 
