@@ -156,7 +156,7 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             }
 
             if (gamepad1.y) {
-                clawAngle.setPosition(clawAnglePos + .01);
+                clawAngle.setPosition(clawAnglePos - .01);
             }
         }
     }
