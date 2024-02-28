@@ -26,8 +26,7 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
 
         // The program will loop several times while a button is being pressed, causing servos to jitter.
         // This boolean logic solves that problem by ensuring actions occur only once per press.
-        // This is only needed because we use a single button to toggle each servo; using a button to set a single servo position
-        // can be done intuitively.
+        // This is only needed when we use a single button to toggle a servo.
         boolean lastMovementLauncher = false;
         boolean toggleMovementLauncher = false;
 
@@ -42,25 +41,21 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             int topRightEncoderPos = topRight.getCurrentPosition();
             int backLeftEncoderPos = backLeft.getCurrentPosition();
             int backRightEncoderPos = backRight.getCurrentPosition();
-            int arm1EncoderPos = arm1.getCurrentPosition();
-            int arm2EncoderPos = arm2.getCurrentPosition();
-            double launcherPos = planeLauncher.getPosition();
             double clawAnglePos = clawAngle.getPosition();
-            double clawLeftPos = clawLeft.getPosition();
-            double clawRightPos = clawRight.getPosition();
 
             updatePosition();
 
-            telemetry.addData("curPoseX: ", curPoseX);
-            telemetry.addData("curPoseY: ", curPoseY);
+            telemetry.addData("Position: ", curPoseX + " , " + curPoseY);
             telemetry.addData("Wrist Pos: ", clawAnglePos);
-            telemetry.addData("Claw Pos (L/R): ", clawLeftPos + "/" + clawRightPos);
+            telemetry.addData("Hook Mode: ", hook.getZeroPowerBehavior());
             telemetry.addData("topLeftPos: ", topLeftEncoderPos);
             telemetry.addData("topRightPos: ", topRightEncoderPos);
             telemetry.addData("backLeftPos: ", backLeftEncoderPos);
             telemetry.addData("backRightPos: ", backRightEncoderPos);
-            telemetry.addData("Hook Mode: ", hook.getZeroPowerBehavior());
+
             telemetry.update();
+
+            clawAngle.scaleRange(0,.7);
 
 
             // Mecanum drivetrain implementation
@@ -140,11 +135,11 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             if (clawCurrentMovement && !lastMovementClaw) {
                 toggleMovementClaw = !toggleMovementClaw;
                 if (toggleMovementClaw) {
-                    clawLeft.setPosition(0); // closed position
-                    clawRight.setPosition(1);
+                    clawLeft.setPosition(0.05); // closed position
+                    clawRight.setPosition(.95);
                 } else {
-                    clawLeft.setPosition(.3); // open position
-                    clawRight.setPosition(.7);
+                    clawLeft.setPosition(.2); // open position
+                    clawRight.setPosition(.8);
                 }
             }
             lastMovementClaw = clawCurrentMovement;
