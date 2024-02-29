@@ -22,7 +22,7 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
     Servo planeLauncher;
     Servo clawAngle, clawLeft, clawRight;
     ElapsedTime timer = new ElapsedTime();
-    double conversionFactor = 95; // NeveRest 40 motor ticks/inch
+    double conversionFactor = 92.4; // NeveRest 40 motor ticks/inch
 
     public void initHardware() throws InterruptedException {
         // Hubs
@@ -50,6 +50,8 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        arm1.setDirection(DcMotorSimple.Direction.REVERSE); // We used a motor on each side of the arm to support its weight better
+
         hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -68,10 +70,18 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // does not stop encoder readings, but allows us to run motors at full power
 
         imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
+    }
+
+    public void clawOpen() {
+        clawLeft.setPosition(.2);
+        clawRight.setPosition(.8);
+    }
+
+    public void clawClose() {
+        clawLeft.setPosition(0.05);
+        clawRight.setPosition(.95);
     }
 
     @Override

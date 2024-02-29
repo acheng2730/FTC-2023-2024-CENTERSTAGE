@@ -14,7 +14,7 @@ import java.util.List;
 
 // A working knowledge of Java is helpful here:
 // abstract classes and inheritance
-public abstract class BaseLinearOpMode extends LinearOpMode {
+public abstract class BaseLinearOpMode_Auton extends LinearOpMode {
     public IMU imu;
     DcMotorEx topLeft, topRight, backLeft, backRight;
     DcMotorEx arm1, arm2;
@@ -50,6 +50,8 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         arm1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        arm1.setDirection(DcMotorSimple.Direction.REVERSE); // We used a motor on each side of the arm to support its weight better
+
         hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -68,10 +70,54 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
         hook.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // does not stop encoder readings, but allows us to run motors at full power
 
         imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
+    }
+
+    public void driveTo(int pos, double time) { // pos in inches; time in seconds
+        topLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        topRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        topLeft.setTargetPosition((int) (pos * conversionFactor));
+        topRight.setTargetPosition((int) (pos * conversionFactor));
+        backLeft.setTargetPosition((int) (pos * conversionFactor));
+        backRight.setTargetPosition((int) (pos * conversionFactor));
+
+        topLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        topRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        topLeft.setVelocity(pos * conversionFactor / time);
+        topRight.setVelocity(pos * conversionFactor / time);
+        backLeft.setVelocity(pos * conversionFactor / time);
+        backRight.setVelocity(pos * conversionFactor / time);
+    }
+
+    public void armTo(int pos, double time) { // pos in ticks and time in seconds
+        arm1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        arm1.setTargetPosition(pos);
+        arm2.setTargetPosition(pos);
+
+        arm1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        arm1.setVelocity(pos / time);
+        arm2.setVelocity(pos / time);
+    }
+
+    public void clawOpen() {
+        clawLeft.setPosition(.2);
+        clawRight.setPosition(.8);
+    }
+
+    public void clawClose() {
+        clawLeft.setPosition(0.05);
+        clawRight.setPosition(.95);
     }
 
     @Override

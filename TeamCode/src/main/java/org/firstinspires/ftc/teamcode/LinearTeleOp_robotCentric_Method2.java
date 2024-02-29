@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -32,9 +30,6 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
 
         boolean lastMovementClaw = false;
         boolean toggleMovementClaw = false;
-
-        boolean lastModeHook = false;
-        boolean toggleModeHook = false;
 
         while (opModeIsActive()) {
             int topLeftEncoderPos = topLeft.getCurrentPosition();
@@ -91,30 +86,19 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             topRight.setPower(topRightPow);
             backRight.setPower(backRightPow);
 
-
-            arm1.setDirection(DcMotorSimple.Direction.REVERSE); // We used a motor on each side of the arm to support its weight better
             double armPower = (-.2 * gamepad1.left_trigger + .5 * gamepad1.right_trigger); // Slower downwards movement b/c gravity
 
             arm1.setPower(armPower);
             arm2.setPower(armPower);
+
+            hook.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+
 
             // Continuation of boolean logic mentioned above:
             // First press, Current gets set to TRUE, the if() loop runs, and toggle gets set to TRUE. Servo moves to TRUE position.
             // Immediately after the press, CurrentMovement becomes FALSE and the outer if() loop does not run.
             // If the button is pressed again, Current is TRUE, the if() loop runs, now setting the toggle to FALSE.
             // Servo moves to FALSE position.
-
-            // When hanging, use BRAKE, when playing, use FLOAT so driver 2 doesn't have to feed line while scoring.
-            boolean hookCurrentMode = gamepad2.start;
-            if (hookCurrentMode && !lastModeHook) {
-                toggleModeHook = !toggleModeHook;
-                if (toggleModeHook) {
-                    hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                } else {
-                    hook.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                }
-            }
-            hook.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
 
             // We use a screw on a servo to hold and release a rubber band that propels our paper airplane
             planeLauncher.setDirection(Servo.Direction.REVERSE);
@@ -135,11 +119,9 @@ public class LinearTeleOp_robotCentric_Method2 extends BaseLinearOpMode {
             if (clawCurrentMovement && !lastMovementClaw) {
                 toggleMovementClaw = !toggleMovementClaw;
                 if (toggleMovementClaw) {
-                    clawLeft.setPosition(0.05); // closed position
-                    clawRight.setPosition(.95);
+                    clawClose();
                 } else {
-                    clawLeft.setPosition(.2); // open position
-                    clawRight.setPosition(.8);
+                    clawOpen();
                 }
             }
             lastMovementClaw = clawCurrentMovement;
