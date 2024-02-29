@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous(name = "AutonomousNoGyro")
-public class Auton_noGyro_rightSpikeLeft extends BaseLinearOpMode {
+@Autonomous(name = "rightSpikeLeft")
+public class Auton_noGyro_rightSpikeLeft extends BaseLinearOpMode_Auton {
 
     @Override
     public void runOpMode() throws InterruptedException {

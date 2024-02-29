@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous(name = "AutonomousNoGyro")
-public class Auton_noGyro_rightSpikeRight extends BaseLinearOpMode {
+@Autonomous(name = "rightSpikeRight")
+public class Auton_noGyro_rightSpikeRight extends BaseLinearOpMode_Auton {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -21,22 +21,11 @@ public class Auton_noGyro_rightSpikeRight extends BaseLinearOpMode {
         telemetry.addData("heading: ", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
         telemetry.update();
 
-        driveFor(1, 0, 0, 1000, timer);
+        driveFor(0, .5, 0, 500, timer);
         sleep(100);
 
-        driveFor(-1, 0, 0, 1000, timer);
+        driveFor(.5, 0, 0, 500, timer);
         sleep(100);
-
-        driveFor(0, 1, 0, 1000, timer);
-        sleep(100);
-
-        driveFor(0, -1, 0, 1000, timer);
-        sleep(100);
-
-        driveFor(0, 0, 90, 1000, timer);
-        sleep(100);
-
-
     }
 
     public void driveFor(double y, double x, double t, int milliseconds, ElapsedTime timer) {

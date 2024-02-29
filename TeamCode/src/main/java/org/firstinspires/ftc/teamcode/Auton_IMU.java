@@ -26,7 +26,7 @@ public class Auton_IMU extends BaseLinearOpMode {
 
         updatePosition();
 
-        driveFieldCentric(2000, 2000, 180);
+        driveFieldCentric(100, 100, 180);
     }
 
     public void driveFieldCentric(int xTarget, int yTarget, int tTarget) {
@@ -39,7 +39,7 @@ public class Auton_IMU extends BaseLinearOpMode {
 
         double x = xControl.calculate(xTarget, curPoseX);
         double y = yControl.calculate(yTarget, curPoseY);
-        double t = thetaControl.calculate(tTarget, Math.toDegrees(AngleUnit.normalizeRadians(angle)));
+        double t = thetaControl.calculate(tTarget, angle);
         double x_rotated = x * Math.cos(angle) - y * Math.sin(angle);
         double y_rotated = x * Math.sin(angle) + y * Math.cos(angle);
 
